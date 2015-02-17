@@ -35,6 +35,9 @@ http://www.last.fm/api/account/create
 
 == Changelog ==
 
+= 0.02 =
+* fixing timestamps
+* preventing posting before scrobble completes
 
 = 0.01 =
 * very first version

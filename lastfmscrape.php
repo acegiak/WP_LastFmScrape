@@ -4,7 +4,7 @@
     Plugin Name: LastFmScrape
     Plugin URI: https://github.com/acegiak/lastfmscrape
     Description: just scrapes the latest songs from your last.fm and posts them with the listen post kind
-    Version: 0.01
+    Version: 0.02
     Author: Ashton McAllan
     Author URI: http://www.acegiak.net
     License: GPLv2
@@ -39,12 +39,12 @@ error_log("lastfmscrape:".$churl."\r\n".print_r($data,true));
 $scrobblecategory = get_category_by_slug(get_option('lastfmscrape_categoryslug'));
 foreach($ld->recenttracks->track as $track){
 	$posttitle = htmlspecialchars($track->artist->{"#text"}." - ".$track->name." @ ".$track->date->{"#text"});
-	if(get_page_by_title($posttitle,$nowhere,'post')){
+	if(get_page_by_title($posttitle,$nowhere,'post') || !isset($track->date->{"#text"}) || strlen($track->date->{"#text"}) <1){
 
 	}else{
 		$post = array(
 			'post_title' => $posttitle,
-			'post_date' => date('Y-m-d H:i:s',$track->date->uts),
+			'post_date_gmt' => date('Y-m-d H:i:s',$track->date->uts),
 			'post_category' => array($scrobblecategory->term_id)
 		);
 
