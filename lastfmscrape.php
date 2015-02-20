@@ -4,7 +4,7 @@
     Plugin Name: LastFmScrape
     Plugin URI: https://github.com/acegiak/lastfmscrape
     Description: just scrapes the latest songs from your last.fm and posts them with the listen post kind
-    Version: 0.02
+    Version: 0.03
     Author: Ashton McAllan
     Author URI: http://www.acegiak.net
     License: GPLv2
@@ -35,7 +35,7 @@ curl_setopt($ch, CURLOPT_HEADER, 0);
 $data = curl_exec($ch);
 curl_close($ch);
 $ld = json_decode($data);
-error_log("lastfmscrape:".$churl."\r\n".print_r($data,true));
+//error_log("lastfmscrape:".$churl."\r\n".print_r($data,true));
 $scrobblecategory = get_category_by_slug(get_option('lastfmscrape_categoryslug'));
 foreach($ld->recenttracks->track as $track){
 	$posttitle = htmlspecialchars($track->artist->{"#text"}." - ".$track->name." @ ".$track->date->{"#text"});
@@ -44,6 +44,7 @@ foreach($ld->recenttracks->track as $track){
 	}else{
 		$post = array(
 			'post_title' => $posttitle,
+			'post_name' => preg_replace("`\W+`","-",$posttitle),
 			'post_date_gmt' => date('Y-m-d H:i:s',$track->date->uts),
 			'post_category' => array($scrobblecategory->term_id)
 		);
@@ -75,12 +76,12 @@ function myprefix_add_3min_cron_schedule( $schedules ) {
 
 
 
-add_action( 'wp', 'prefix_setup_schedule' );
+add_action( 'wp', 'lastfmscrape_setup_schedule' );
 /**
  * On an early action hook, check if the hook is scheduled - if not, schedule it.
  */
-function prefix_setup_schedule() {
-	if ( ! wp_next_scheduled( 'prefix_hourly_event' ) ) {
+function lastfmscrape_setup_schedule() {
+	if ( ! wp_next_scheduled( 'lastfmscrape_regularly' ) ) {
 		wp_schedule_event( time(), '15min', 'lastfmscrape_regularly');
 	}
 }

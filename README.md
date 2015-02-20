@@ -35,6 +35,9 @@ http://www.last.fm/api/account/create
 
 == Changelog ==
 
+= 0.03 =
+* fixing bug where hundreds of schedules would be created
+
 = 0.02 =
 * fixing timestamps
 * preventing posting before scrobble completes
